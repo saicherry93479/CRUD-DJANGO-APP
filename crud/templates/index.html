@@ -1,0 +1,82 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+    <script
+      src="https://kit.fontawesome.com/4ce7c17e96.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div class="container">
+      <main>
+        <div>
+          <h1 class="header">CRUD APP</h1>
+          <div>
+            <form action="" method="POST">
+              {% csrf_token %}
+              <input
+                type="text"
+                name="name"
+                maxlength="30"
+                minlength="6"
+                required
+              />
+              <input type="submit" />
+            </form>
+            <select onchange="changeHandler(this)" id="selectID">
+              <option value="All">All</option>
+
+              <option value="COMPLETED">Completed</option>
+              <option value="DELETED">Deleted</option>
+              <option value="ACTIVE">Active</option>
+            </select>
+          </div>
+        </div>
+        {% if data|length < 1 %}
+        <div class="noData"><h1>NO DATA FOUND !!!</h1></div>
+        {% endif %}
+        <section>
+          {% for i in data %}
+          <div
+            class="dataItem {% if i.completed %} completed {% endif %} {% if i.deleted %} deleted {% endif %}"
+          >
+            <p>{{ forloop.counter }}</p>
+            <p>{{i.date}}</p>
+
+            {% if i.completed %}
+            <p>
+              <del>{{i.name}}</del>
+            </p>
+            <a style="cursor: pointer" href="{% url 'completeUndo' i.id %}">
+              <button class="undoButton green">Undo</button>
+            </a>
+            {% elif i.deleted %}
+            <p>DEL ( {{i.name}} )</p>
+            <a style="cursor: pointer" href="{% url 'deleteUndo' i.id %}">
+              <button class="undoButton red">Undo</button>
+            </a>
+
+            {% else %}
+            <p>{{i.name}}</p>
+
+            <a href="{% url 'completed' i.id %}">
+              <i class="fa-solid fa-circle-check"></i
+            ></a>
+            <a href="{% url 'deleted' i.id  %}">
+              <i class="fa-solid fa-trash"></i
+            ></a>
+            {% endif %}
+          </div>
+          {% endfor %}
+        </section>
+      </main>
+    </div>
+    <script src="{% static 'js/main.js' %}"></script>
+  </body>
+</html>
